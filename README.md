@@ -6,7 +6,8 @@ A very basic expense tracker and envelope budgeter built as a Single-Page Applic
 The goal is to compile it into a fully functional Cordova / PhoneGap native application.
 
 ## Dependencies
-jQuery
-Handlebars
-Ember.js 1.3
-Ember Data 1.0 Beta
+
+- jQuery
+- Handlebars
+- Ember.js 1.3
+- Ember Data 1.0 Beta
