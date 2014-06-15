@@ -1,22 +1,357 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>My app</title>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="description" content="NickelTracker">
+    <meta name="author" content="Edmundo Fuentes">
+    <meta name="apple-mobile-web-app-title" content="NickelTracker">
+
+    <link rel="shortcut icon" href="img/NickelTracker-favico.png">
+    <link rel="apple-touch-icon" href="img/NickelTracker-iphone.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/NickelTracker-iphone-retina.png">
+    <link rel="apple-touch-startup-image" href="img/NickelTracker-background-iphone5.png" media="(device-height:568px)">
+
+    <title>NickelTracker</title>
+
+    <!-- Bootstrap core CSS + Plugins -->
+    <link href="css/bootstrap-3.1.1.min.css" rel="stylesheet">
+    <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <!-- Font Awesome icons -->
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <!-- Custom styles for UI and tweaks -->
+    <link href="css/offcanvas.css" rel="stylesheet">
 </head>
 <body>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle navbar-button" data-toggle="offcanvas"><a href="#" class="navbar-link"><span class="glyphicon glyphicon-list"></span></a></button>
+                <a href="#" class="navbar-brand"><strong>NickelTracker</strong></a>
+            </div>
+        </div>
+    </div>
 
-    <script type="text/x-handlebars" data-template-name="dashboard">
-        <h1>{{ name }}</h1>
-    </script>
+            <!-- start: application -->
+            <script type="text/x-handlebars">
+                <!-- start: container -->
+                <div id="main-body" class="container">
+                    <div class="row row-offcanvas row-offcanvas-left">
+                        <!-- start: sidebar -->
+                        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation" style="padding-top: 40px;">
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><strong>Menu</strong></div>
+                                <div class="list-group">
+                                    {{#link-to 'dashboard' class='list-group-item'}}Dashboard{{/link-to}}
+                                    {{#link-to 'accounts' class='list-group-item'}}Accounts{{/link-to}}
+                                    {{#link-to 'categories' class='list-group-item'}}Categories{{/link-to}}
+                                    {{#link-to 'transactions' class='list-group-item'}}Transactions{{/link-to}}
+                                </div>
+                            </div>
+
+                            <div class="panel panel-default">
+                                <div class="list-group">
+                                    {{#link-to 'transactions-new-income' class='list-group-item'}}
+                                    <span class="glyphicon glyphicon-plus"></span> New Income
+                                    {{/link-to}}
+                                    {{#link-to 'transactions-new-expense' class='list-group-item'}}
+                                        <span class="glyphicon glyphicon-minus"></span> New Expense
+                                    {{/link-to}}
+                                    {{#link-to 'transactions-new-transfer' class='list-group-item'}}
+                                    <span class="glyphicon glyphicon-arrow-right"></span> New Transfer
+                                    {{/link-to}}
+                                </div>
+                            </div>
+
+                            <!-- disable logout for webapp operation
+                            <div class="panel panel-default">
+                                <div class="list-group">
+                                    <a class="list-group-item" href="#">
+                                        <span class="glyphicon glyphicon-off"></span> Logout</a>
+                                </div>
+                            </div>
+                            -->
+
+                            <p class="text-center">
+                                <small>by <a href="mailto:me@edmundofuentes.com">Edmundo Fuentes</a><br>v2014.24.03</small>
+                            </p>
+                        </div>
+                        <!-- end: sidebar -->
+
+                        <!-- start: application outlet -->
+                        <div class="col-xs-12 col-sm-9">
+                            {{outlet}}
+                        </div>
+                        <!-- end: application outlet -->
+                    </div>
+                </div>
+                <!-- end: container -->
+            </script>
+            <!-- end: application -->
+
+            <!-- start: dashboard template -->
+            <script type="text/x-handlebars" data-template-name="dashboard">
+                <h1 class="page-header">Dashboard</h1>
+
+                <div class="row placeholders">
+                    <div class="col-xs-6 col-sm-3 placeholder">
+                        <h4>$expense</h4>
+                        <span class="text-muted">Monthly Expense</span>
+                    </div>
+                    <div class="col-xs-6 col-sm-3 placeholder">
+                        <h4>$income</h4>
+                        <span class="text-muted">Monthly Income</span>
+                    </div>
+                    <div class="col-xs-6 col-sm-3 placeholder">
+                        <h4>$cash</h4>
+                        <span class="text-muted">Cash</span>
+                    </div>
+                    <div class="col-xs-6 col-sm-3 placeholder">
+                        <h4>$bank</h4>
+                        <span class="text-muted">Debit</span>
+                    </div>
+                </div>
+
+                <h3>Budget <small>max $budget</small></h3>
+                <div class="bs-component">
+                    <div class="progress progress-striped">
+                        <div class="progress-bar" style="width: 25%;"></div>
+                    </div>
+                </div>
+            </script>
+            <!-- end: dashboard templates -->
+
+            <script type="text/x-handlebars" data-template-name="transactions-new-income">
+                <!-- start: transactions new income -->
+                <h1 class="page-header">New Transaction</h1>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <span class="glyphicon glyphicon-plus"></span> New Income
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <form id="new-income" class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <select id="new-income-accountId" class="form-control input-md" name="accountId">
+                                        <option value="0" selected>-- Account --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <input id="new-income-description" type="text" class="form-control" name="description"
+                                           placeholder="Description" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <textarea id="new-income-details" class="form-control input-md" name="details" rows="2"
+                                              placeholder="Details"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-usd"></span></span>
+                                        <input id="new-income-amount" type="number" class="form-control" name="amount" placeholder="Amount" required>
+                                        <span class="input-group-addon">.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <div class="input-group date" id="new-income-date-picker" data-date-format="yyyy-mm-dd">
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                        <input id="new-income-date" class="form-control" name="date" size="16" type="text"
+                                            placeholder="Date" readonly />
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                        {{!<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>}}
+                                    </div>
+                                    <{{!}}script type="text/javascript">
+                                        var form = $("#new-income-date-picker");
+                                            form.datetimepicker({
+                                                format: "yyyy-mm-dd",
+                                                autoclose: true,
+                                                minView: 2,
+                                                pickerPosition: "bottom-right"
+                                            });
+                                    <{{!}}/script>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <button id="new-income-save" type="button" class="btn btn-primary btn-block btn-sm"
+                                            onclick="processNewIncome()">Save!</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- end: transactions new income -->
+            </script>
+
+            <!-- start: transactions new expense -->
+            <script type="text/x-handlebars" data-template-name="transactions-new-expense">
+                <h1 class="page-header">New Transaction</h1>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <span class="glyphicon glyphicon-minus"></span> New Expense
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form" action="#" method="post">
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <select class="form-control input-md" name="accountId">
+                                        <option value="0" selected>-- Account --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <select class="form-control input-md" name="categoryId">
+                                        <option value="0" selected>-- Category --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <input type="text" class="form-control" id="description" name="description"
+                                           placeholder="Description" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <textarea class="form-control input-md" name="details" rows="2"
+                                              placeholder="Details"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon">$</span>
+                                        <input type="number" class="form-control" name="amount" placeholder="Amount" required>
+                                        <span class="input-group-addon">.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                        <input type="date" class="form-control" name="date" placeholder="DD-MM-YYYY" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <button id="btn-save" type="submit" class="btn btn-primary btn-block btn-sm"><span id="btn-save-text">Save!</span></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </script>
+            <!-- end: transactions new expense -->
+
+            <!-- start: transactions new transfer -->
+            <script type="text/x-handlebars" data-template-name="transactions-new-transfer">
+                <h1 class="page-header">New Transaction</h1>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <span class="glyphicon glyphicon-arrow-right"></span> New Transfer
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <form class="form-horizontal" role="form" action="#" method="post">
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <select class="form-control input-md" name="sourceId">
+                                        <option value="0" selected>-- Source Account --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <select class="form-control input-md" name="destinationId">
+                                        <option value="0" selected>-- Destination Account --</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <input type="text" class="form-control" id="description" name="description"
+                                           placeholder="Description" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <textarea class="form-control input-md" name="details" rows="2"
+                                              placeholder="Details"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon">$</span>
+                                        <input type="number" class="form-control" name="amount" placeholder="Amount" required>
+                                        <span class="input-group-addon">.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <div class="input-group input-group-md">
+                                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                                        <input type="date" class="form-control" name="date" placeholder="DD-MM-YYYY" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <button id="btn-save" type="submit" class="btn btn-primary btn-block btn-sm"><span id="btn-save-text">Save!</span></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </script>
+            <!-- end: transactions new transfer -->
 
     <!-- Libraries and Dependencies -->
-    <script src="js/libs/jquery-1.10.2.min.js"></script>
-    <script src="js/libs/handlebars-1.0.0.js"></script>
-    <script src="js/libs/ember.js"></script>
-    <script src="js/libs/ember-data.js"></script>
+    <script type="text/javascript" src="js/libs/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/libs/indexeddb-shim.min.js"></script> <!-- enable IndexedDB using WebSQL -->
+    <script type="text/javascript" src="js/libs/handlebars-1.0.0.js"></script>
+    <script type="text/javascript" src="js/libs/ember.js"></script>
+    <script type="text/javascript" src="js/libs/ember-data.js"></script>
+    <script type="text/javascript" src="js/libs/ember-indexeddb-adapter.js"></script>
+
+    <!-- UI Tweaks and Fixes -->
+    <script type="text/javascript" src="js/libs/bootstrap-3.1.1.min.js"></script>
+    <script type="text/javascript" src="js/libs/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="js/libs/fastclick.js"></script>
+    <script type="text/javascript" src="js/libs/jquery.touchSwipe.min.js"></script>
+    <script type="text/javascript" src="js/ui-tweaks.js"></script>
 
     <!-- NickelTracker Application -->
-    <script src="js/application.js"></script>
-    <script src="js/router.js"></script>
-    <script src="js/models/transaction.js"></script>
+    <script type="text/javascript" src="js/application.js"></script>
+    <script type="text/javascript" src="js/router.js"></script>
+    <!-- NickelTracker DS Models -->
+    <script type="text/javascript" src="js/models/account.js"></script>
+    <script type="text/javascript" src="js/models/transaction.js"></script>
+    <script type="text/javascript" src="js/models/category.js"></script>
+    <!-- NickelTracer Business Logic -->
+    <script type="text/javascript" src="js/logic.js"></script>
 </body>
 </html>
