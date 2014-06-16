@@ -16,16 +16,6 @@ window.onload = (function(){
         }
     }
 
-    ///// Save button /////
-    var s = document.getElementById("btn-save");
-    // assign a function to the link on "onclick"
-    if(s){
-        s.onclick = function() {
-            document.getElementById("btn-save-text").innerHTML='Saving..';
-            return true;
-        };
-    }
-
     ///// DateTime Picker /////
     var from = $("#form_datetime_from");
     var to = $("#form_datetime_to");
